@@ -28,7 +28,8 @@ class MainWidget(Widget):
     SPEED = 4
     current_offset_y = 0
     
-    SPEED_X = 2
+    SPEED_X = 3
+    current_speed_x = 0
     current_offset_x = 0
     
     
@@ -138,14 +139,23 @@ class MainWidget(Widget):
         tr_y = self.perspective_point_y - factor_y * self.perspective_point_y 
         return int(tr_x), int(tr_y)
     
-    
+    def on_touch_down(self, touch):
+        if touch.x < self.width / 2:
+            self.current_speed_x = self.SPEED_X
+        else:
+            self.current_speed_x = -self.SPEED_X
+        
+    def on_touch_up(self, touch):
+        self.current_speed_x = 0
+        
+        
     def update(self, dt):
         # print("dt : " + str(dt * 60))
         time_factor = dt * 60
         self.update_vertical_lines()
         self.update_horizontal_lines()
         self.current_offset_y += self.SPEED * time_factor
-        self.current_offset_x += self.SPEED_X * time_factor
+        self.current_offset_x += self.current_speed_x * time_factor
 
         spacing_y = self.H_LINES_SPACING * self.height
         if self.current_offset_y >= spacing_y:
