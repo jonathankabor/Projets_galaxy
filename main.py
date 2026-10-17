@@ -134,18 +134,20 @@ class MainWidget(Widget):
     def generate_tiles_coordinates(self):
         last_y = 0
         
-        for i in range(0, len(self.tiles_coordinates)-1, 1, -1):
+        for i in range(len(self.tiles_coordinates)-1, -1, -1):
             if self.tiles_coordinates[i][1] < self.current_y_loop:
                 del self.tiles_coordinates[i] 
                 
                 
         if len(self.tiles_coordinates) > 0:
-            self.tiles_coordinates.append((0, last_y))
+            last_coordinate = self.tiles_coordinates[-1]
             last_y = last_coordinate[1] + 1
             
         for i in range(len(self.tiles_coordinates), self.NB_TILES):
             self.tiles_coordinates.append((0, last_y))
             last_y += 1
+            
+            
 
     def init_vertical_lines(self):
         with self.canvas:
@@ -156,14 +158,6 @@ class MainWidget(Widget):
             for i in range(0, self.V_NB_LINES):
                 self.vertical_lines.append(Line())
             
-            
-    def update_vertical_lines(self):
-        start_index = -int(self.V_NB_LINES / 2)+1
-        for i in range(start_index, start_index + self.V_NB_LINES):
-            line_x = self.get_line_x_from_index(i + start_index)
-            x1, y1 = self.transform(line_x, 0)
-            x2, y2 = self.transform(line_x, self.height)
-            self.vertical_lines[i - start_index].points = [x1, y1, x2, y2]
             
     def update_tiles(self):
         for i in range(0, self.NB_TILES):
@@ -196,7 +190,7 @@ class MainWidget(Widget):
         end_index = start_index + self.V_NB_LINES - 1
                 
         xmin = self.get_line_x_from_index(start_index)
-        xmax = self.get_line_x_from_index(end_index - 1)
+        xmax = self.get_line_x_from_index(end_index)
         for i in range(0, self.H_NB_LINES):
             line_y = self.get_line_y_from_index(i)
             x1, y1 = self.transform(xmin, line_y)
@@ -236,6 +230,14 @@ class MainWidget(Widget):
         line_x = central_line_x + offset * spacing + self.current_offset_x
         return line_x
     
+    def update_vertical_lines(self):
+        start_index = -int(self.V_NB_LINES/2)+1
+        for i in range(start_index, start_index + self.V_NB_LINES):
+            line_x = self.get_line_x_from_index(i)
+            x1, y1 = self.transform(line_x, 0)
+            x2, y2 = self.transform(line_x, self.height)
+            self.vertical_lines[i].points = [x1, y1, x2, y2]
+    
     def get_line_y_from_index(self, index):
         spacing = self.height * self.H_LINES_SPACING
         line_y = index * spacing - self.current_offset_y
@@ -246,7 +248,7 @@ class MainWidget(Widget):
         ti_y = ti_y - self.current_y_loop
         x = self.get_line_x_from_index(ti_x)
         y = self.get_line_y_from_index(ti_y)
-        x1, y1 = self.transform(x, y)
+        return x, y
 
 class GalaxyApp(App):
     pass
