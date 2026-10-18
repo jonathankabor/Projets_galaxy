@@ -12,6 +12,7 @@ from kivy.graphics import Line, Color
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.vertex_instructions import platform
 from kivy.graphics.vertex_instructions import Quad
+import random
 
 
 
@@ -29,7 +30,7 @@ class MainWidget(Widget):
     H_LINES_SPACING = 0.1   # pourcentage of the width
     horizontal_lines = []
     
-    SPEED = 4
+    SPEED = 5
     current_offset_y = 0
     current_y_loop = 0
     
@@ -37,7 +38,7 @@ class MainWidget(Widget):
     current_speed_x = 0
     current_offset_x = 0
     
-    NB_TILES  = 4
+    NB_TILES  = 8
     tiles = []
     tiles_coordinates = []
     
@@ -132,6 +133,7 @@ class MainWidget(Widget):
                 self.tiles.append(Quad())
     
     def generate_tiles_coordinates(self):
+        last_x = 0
         last_y = 0
         
         for i in range(len(self.tiles_coordinates)-1, -1, -1):
@@ -141,12 +143,24 @@ class MainWidget(Widget):
                 
         if len(self.tiles_coordinates) > 0:
             last_coordinate = self.tiles_coordinates[-1]
+            last_x = last_coordinate[0] 
             last_y = last_coordinate[1] + 1
             
-        for i in range(len(self.tiles_coordinates), self.NB_TILES):
-            self.tiles_coordinates.append((0, last_y))
-            last_y += 1
+        
             
+        for i in range(len(self.tiles_coordinates), self.NB_TILES):
+            r = random.randint(0, 2)
+            self.tiles_coordinates.append((last_x, last_y))
+            if r == 1:
+                last_x += 1
+                self.tiles_coordinates.append((last_x, last_y))
+                last_y += 1
+                self.tiles_coordinates.append((last_x, last_y))
+            elif r == 2:
+                last_x -= 1
+                self.tiles_coordinates.append((last_x, last_y))
+                self.tiles_coordinates.append((last_x, last_y))
+            last_y += 1
             
 
     def init_vertical_lines(self):
