@@ -13,6 +13,7 @@ from kivy.graphics.context_instructions import Color
 from kivy.graphics.vertex_instructions import platform
 from kivy.graphics.vertex_instructions import Quad
 import random
+from kivy.graphics.vertex_instructions import Triangle
 
 
 
@@ -23,7 +24,7 @@ class MainWidget(Widget):
     perspective_point_y = NumericProperty(0)
     
     V_NB_LINES = 10
-    V_LINES_SPACING = 0.25   # pourcentage of the width
+    V_LINES_SPACING = 0.4   # pourcentage of the width
     vertical_lines = []
     
     H_NB_LINES = 8
@@ -34,7 +35,7 @@ class MainWidget(Widget):
     current_offset_y = 0
     current_y_loop = 0
     
-    SPEED_X = 3
+    SPEED_X = 20
     current_speed_x = 0
     current_offset_x = 0
     
@@ -43,12 +44,19 @@ class MainWidget(Widget):
     tiles_coordinates = []
     
     
+    SHIP_WIDTH = 0.1
+    SHIP_HEIGHT = 0.035
+    SHIP_BASE_Y = 0.04
+    ship = None
+    
+    
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         # print("INIT W: " + str(self.width) + " H: " + str(self.height))
         self.init_vertical_lines()
         self.init_horizontal_lines()
         self.init_tiles()
+        self.init_ship()
         self.pre_fill_tiles_coordinates()
         self.generate_tiles_coordinates()
        
@@ -126,6 +134,28 @@ class MainWidget(Widget):
     def on_perspective_point_y(self, widget, value):
         # print("PY: " + str(value))
         pass
+    
+    
+    def init_ship(self):
+        with self.canvas:
+            Color(0, 0, 0)
+            self.ship = Triangle()
+            
+            
+    def update_ship(self):
+        center_x = self.width / 2
+        base_y = self.SHIP_BASE_Y * self.height
+        half_width = self.SHIP_WIDTH * self.width / 2
+        ship_height = self.SHIP_HEIGHT * self.height
+        
+        
+
+        x1, y1 = self.transform(center_x - half_width, base_y)
+        x2, y2 = self.transform(center_x, base_y + ship_height )
+        x3, y3 = self.transform(center_x + half_width, base_y)
+        
+        self.ship.points = [x1, y1, x2, y2, x3, y3]
+            
     
     def init_tiles(self):
         with self.canvas:
@@ -241,6 +271,7 @@ class MainWidget(Widget):
         self.update_vertical_lines()
         self.update_horizontal_lines()
         self.update_tiles()
+        self.update_ship()
         self.current_offset_y += self.SPEED * time_factor
         self.current_offset_x += self.current_speed_x * time_factor
 
