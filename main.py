@@ -49,6 +49,7 @@ class MainWidget(Widget):
         self.init_vertical_lines()
         self.init_horizontal_lines()
         self.init_tiles()
+        self.pre_fill_tiles_coordinates()
         self.generate_tiles_coordinates()
        
        
@@ -131,6 +132,11 @@ class MainWidget(Widget):
             Color(1, 1, 1)
             for i in range(0, self.NB_TILES):
                 self.tiles.append(Quad())
+                
+                
+    def pre_fill_tiles_coordinates(self):
+        for i in range(0, 10):
+            self.tiles_coordinates.append((0, i))
     
     def generate_tiles_coordinates(self):
         last_x = 0
