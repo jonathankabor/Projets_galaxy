@@ -16,6 +16,7 @@ import random
 from kivy.graphics.vertex_instructions import Triangle
 from kivy.lang import Builder
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.properties import ObjectProperty, NumericProperty
 
 
 Builder.load_file('menu.kv')
@@ -25,6 +26,7 @@ Builder.load_file('menu.kv')
 
 
 class MainWidget(RelativeLayout):
+    menu_widget = ObjectProperty()
     perspective_point_x = NumericProperty(0)
     perspective_point_y = NumericProperty(0)
     
@@ -56,6 +58,7 @@ class MainWidget(RelativeLayout):
     ship_coordinates = [(0, 0), (0, 0), (0, 0)]
     
     state_game_over = False
+    state_game_has_started = False
     
     
     def __init__(self, **kwargs):
@@ -286,10 +289,12 @@ class MainWidget(RelativeLayout):
             self.horizontal_lines[i].points = [x1, y1, x2, y2]
     
     def on_touch_down(self, touch):
-        if touch.x < self.width / 2:
-            self.current_speed_x = self.SPEED_X
-        else:
-            self.current_speed_x = -self.SPEED_X
+        if not self.state_game_over and self.state_game_has_started:
+            if touch.x < self.width / 2:
+                self.current_speed_x = self.SPEED_X
+            else:
+                self.current_speed_x = -self.SPEED_X
+        return super(RelativeLayout, self).on_touch_down(touch)
         
     def on_touch_up(self, touch):
         self.current_speed_x = 0
@@ -303,7 +308,7 @@ class MainWidget(RelativeLayout):
         self.update_tiles()
         self.update_ship()
         
-        if not self.state_game_over:
+        if not self.state_game_over and self.state_game_has_started:
             speed_y = self.SPEED * self.height / 100
             speed_x = self.current_speed_x * self.width / 100
         
@@ -318,7 +323,13 @@ class MainWidget(RelativeLayout):
             
         if not self.check_ship_collision() and not self.state_game_over:
             self.state_game_over = True
+            self.menu_widget.opacity = 1
             print("GAME OVER")
+            
+    def on_menu_button_pressed(self):
+        self.state_game_has_started = True
+        self.menu_widget.opacity = 0
+        
             
             
     def get_line_x_from_index(self, index):
