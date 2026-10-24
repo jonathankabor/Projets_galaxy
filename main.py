@@ -46,7 +46,7 @@ class MainWidget(RelativeLayout):
     current_speed_x = 0
     current_offset_x = 0
     
-    NB_TILES  = 8
+    NB_TILES  = 16
     tiles = []
     tiles_coordinates = []
     
@@ -82,6 +82,17 @@ class MainWidget(RelativeLayout):
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
+        
+        
+    def reset_game(self): 
+        self.current_offset_y = 0
+        self.current_y_loop = 0
+        self.current_speed_x = 0
+        self.current_offset_x = 0
+        self.tiles_coordinates = []
+        self.pre_fill_tiles_coordinates()
+        self.generate_tiles_coordinates() 
+        self.state_game_over = False 
         
         
     def is_desktop(self):
@@ -327,6 +338,7 @@ class MainWidget(RelativeLayout):
             print("GAME OVER")
             
     def on_menu_button_pressed(self):
+        self.reset_game()
         self.state_game_has_started = True
         self.menu_widget.opacity = 0
         
