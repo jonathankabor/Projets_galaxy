@@ -14,12 +14,17 @@ from kivy.graphics.vertex_instructions import platform
 from kivy.graphics.vertex_instructions import Quad
 import random
 from kivy.graphics.vertex_instructions import Triangle
+from kivy.lang import Builder
+from kivy.uix.relativelayout import RelativeLayout
+
+
+Builder.load_file('menu.kv')
 
 
 
 
 
-class MainWidget(Widget):
+class MainWidget(RelativeLayout):
     perspective_point_x = NumericProperty(0)
     perspective_point_y = NumericProperty(0)
     
