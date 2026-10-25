@@ -84,6 +84,7 @@ class MainWidget(RelativeLayout):
         self.init_ship()
         self.pre_fill_tiles_coordinates()
         self.generate_tiles_coordinates()
+        self.score_txt = "SCORE: " + str(self.current_y_loop)
        
        
         if self.is_desktop():
